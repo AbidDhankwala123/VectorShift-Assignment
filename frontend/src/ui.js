@@ -56,46 +56,40 @@ export const PipelineUI = () => {
     onConnect,
   } = useStore(selector, shallow);
 
-  const onDrop = useCallback(
-    (event) => {
-      event.preventDefault();
+  const onDrop = useCallback((event) => {
+    event.preventDefault();
 
-      const reactFlowBounds =
-        reactFlowWrapper.current.getBoundingClientRect();
+    const reactFlowBounds =
+      reactFlowWrapper.current.getBoundingClientRect();
 
-      const appData = JSON.parse(
-        event.dataTransfer.getData('application/reactflow')
-      );
+    const appData = JSON.parse(
+      event.dataTransfer.getData('application/reactflow')
+    );
 
-      const type = appData.nodeType;
+    const type = appData.nodeType;
 
-      const position = reactFlowInstance.project({
-        x: event.clientX - reactFlowBounds.left,
-        y: event.clientY - reactFlowBounds.top,
-      });
+    const position = reactFlowInstance.project({
+      x: event.clientX - reactFlowBounds.left,
+      y: event.clientY - reactFlowBounds.top,
+    });
 
-      const nodeID = getNodeID(type);
+    const nodeID = getNodeID(type);
 
-      const newNode = {
+    const newNode = {
+      id: nodeID,
+      type,
+      position,
+      data: {
         id: nodeID,
-        type,
-        position,
-        data: {
-          id: nodeID,
-          nodeType: type,
-        },
-      };
+        nodeType: type,
+      },
+    };
 
-      addNode(newNode);
-    },
-    [reactFlowInstance]
-  );
+    addNode(newNode);
+  }, [reactFlowInstance]);
 
   return (
-    <div
-      ref={reactFlowWrapper}
-      style={{ width: '100vw', height: '75vh' }}
-    >
+    <div ref={reactFlowWrapper} style={{ width: '100vw', height: '75vh' }}>
       <ReactFlow
         nodes={nodes}
         edges={edges}
